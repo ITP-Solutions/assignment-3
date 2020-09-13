@@ -24,7 +24,7 @@ function App() {
 
   // Bind the `handleSubmit` function to changes in the
   // input state
-  React.useEffect(handleSubmit, [loading]);
+  React.useEffect(handleSubmit, [input]);
 
   /**
    * Handles api calls/side effects from user submitting
@@ -33,6 +33,7 @@ function App() {
   function handleSubmit() {
     if (showError) setShowError(false);
     if (input === '') return;
+    setLoading(true);
     setData({
       posts: null,
       info: null
@@ -59,31 +60,26 @@ function App() {
   }
 
   /**
-   * Submit callback for form
+   * Submit callback for subreddit. Returns function to
+   * set input state based on given subreddit from button
+   * triggered event
    *
-   * @param e - event object from action
+   * @param subreddit - the subreddit to look up
+   * @return function with event object as param
    */
-  function onSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-  }
-
-  /**
-   * Given an input change, update the `input` state
-   *
-   * @param e - event target object
-   */
-  function onInputChange(e) {
-    e.preventDefault();
-    setInput(e.target.value);
+  function onSubmit(subreddit) {
+    return function(e) {
+      e.preventDefault();
+      setInput(subreddit);
+    }
   }
 
   return (
     <div className="App">
-      <form onSubmit={onSubmit}>
-        <p>Enter a subreddit:</p>
-        <input type="text" id="subreddit-input" onChange={onInputChange}/>
-        <button type="submit"> Submit</button>
+      <form>
+        <button type="button" onClick={onSubmit("javascript")}>r/javascript</button>
+        <button type="button" onClick={onSubmit("java")}>r/java</button>
+        <button type="button" onClick={onSubmit("cats")}>r/cats</button>
       </form>
       {data.info && <SubredditInfo info={data.info}/>}
       <br/><br/>
