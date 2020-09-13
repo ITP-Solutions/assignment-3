@@ -24,7 +24,7 @@ function App() {
 
   // Bind the `handleSubmit` function to changes in the
   // input state
-  React.useEffect(handleSubmit, [input]);
+  React.useEffect(handleSubmit, [loading]);
 
   /**
    * Handles api calls/side effects from user submitting
@@ -37,7 +37,6 @@ function App() {
       posts: null,
       info: null
     });
-    setLoading(true);
     let posts;
     fetchPosts(input)
       .then(res => {
@@ -61,19 +60,29 @@ function App() {
 
   /**
    * Submit callback for form
-   * 
+   *
    * @param e - event object from action
    */
   function onSubmit(e) {
     e.preventDefault();
-    setInput(document.querySelector('#subreddit-input').value.trim());
+    setLoading(true);
+  }
+
+  /**
+   * Given an input change, update the `input` state
+   *
+   * @param e - event target object
+   */
+  function onInputChange(e) {
+    e.preventDefault();
+    setInput(e.target.value);
   }
 
   return (
     <div className="App">
       <form onSubmit={onSubmit}>
         <p>Enter a subreddit:</p>
-        <input type="text" id="subreddit-input" />
+        <input type="text" id="subreddit-input" onChange={onInputChange}/>
         <button type="submit"> Submit</button>
       </form>
       {data.info && <SubredditInfo info={data.info}/>}
